@@ -122,6 +122,10 @@ pub struct Tracking {
     pub device_motions: Vec<(u64, DeviceMotion)>,
     pub hand_skeletons: [Option<[Pose; 26]>; 2],
     pub face_data: FaceData,
+    pub left_view_pose: Pose,
+    pub left_view_fov: Fov,
+    pub right_view_pose: Pose,
+    pub right_view_fov: Fov,
 }
 
 #[derive(Serialize, Deserialize)]

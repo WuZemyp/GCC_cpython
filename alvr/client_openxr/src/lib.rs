@@ -305,9 +305,12 @@ fn stream_input_pipeline(
         );
 
     let mut device_motions = Vec::with_capacity(3);
-
+    let mut left_view_pose=Pose { orientation: (Quat::default()), position: (Vec3::default()) };
+    let mut left_view_fov=Fov { left: (0.), right: (0.), up: (0.), down: (0.) };
+    let mut right_view_pose=Pose { orientation: (Quat::default()), position: (Vec3::default()) };
+    let mut right_view_fov=Fov { left: (0.), right: (0.), up: (0.), down: (0.) };
     'head_tracking: {
-        let Ok((view_flags, views)) = xr_ctx.session.locate_views(
+        let Ok((view_flags, views)) = xr_ctx.session.locate_views(//fov here
             xr::ViewConfigurationType::PRIMARY_STEREO,
             to_xr_time(target_timestamp),
             &stream_ctx.reference_space.read(),
@@ -321,7 +324,7 @@ fn stream_input_pipeline(
         {
             break 'head_tracking;
         }
-
+        
         let ipd = (to_vec3(views[0].pose.position) - to_vec3(views[1].pose.position)).length();
         if f32::abs(stream_ctx.last_ipd - ipd) > IPD_CHANGE_EPS {
             alvr_client_core::send_views_config([to_fov(views[0].fov), to_fov(views[1].fov)], ipd);
@@ -334,7 +337,10 @@ fn stream_input_pipeline(
         let head_position =
             (to_vec3(views[0].pose.position) + to_vec3(views[1].pose.position)) / 2.0;
         let head_orientation = to_quat(views[0].pose.orientation);
-
+        left_view_pose=to_pose(views[0].pose);
+        left_view_fov=to_fov(views[0].fov);
+        right_view_pose=to_pose(views[1].pose);
+        right_view_fov=to_fov(views[1].fov);
         stream_ctx
             .views_history_sender
             .send(ViewsHistorySample {
@@ -384,6 +390,7 @@ fn stream_input_pipeline(
     if let Some(motion) = right_hand_motion {
         device_motions.push((*RIGHT_HAND_ID, motion));
     }
+    //let refSpace=&stream_ctx.reference_space.read().locate(XR_NULL_HANDLE, time);
 
     let face_data = FaceData {
         eye_gazes: interaction::get_eye_gazes(
@@ -399,12 +406,16 @@ fn stream_input_pipeline(
         htc_eye_expression: interaction::get_htc_eye_expression(&interaction_ctx.face_sources),
         htc_lip_expression: interaction::get_htc_lip_expression(&interaction_ctx.face_sources),
     };
-
+    
     alvr_client_core::send_tracking(Tracking {
         target_timestamp,
         device_motions,
         hand_skeletons: [left_hand_skeleton, right_hand_skeleton],
         face_data,
+        left_view_pose,
+        left_view_fov,
+        right_view_pose,
+        right_view_fov,
     });
 
     let button_entries =
