@@ -794,7 +794,7 @@ fn connection_pipeline(
                         tracking.left_view_fov.up.to_string(),tracking.left_view_fov.down.to_string(),tracking.left_view_fov.left.to_string(),tracking.left_view_fov.right.to_string(),//left eye fov
                         right_view_quat_array[0].to_string(),right_view_quat_array[1].to_string(),right_view_quat_array[2].to_string(),right_view_quat_array[3].to_string(),//right eye view orientation
                         right_view_position_array[0].to_string(),right_view_position_array[1].to_string(),right_view_position_array[2].to_string(),//right eye view position
-                        tracking.right_view_fov.up.to_string(),tracking.right_view_fov.down.to_string(),tracking.right_view_fov.left.to_string(),tracking.right_view_fov.right.to_string()];//right eye fov
+                        tracking.right_view_fov.up.to_string(),tracking.right_view_fov.down.to_string(),tracking.right_view_fov.left.to_string(),tracking.right_view_fov.right.to_string(),left_yaw.to_string(),left_pitch.to_string()];//right eye fov
                         write_latency_to_csv("eyegaze.csv", eye_data);
                     }
 
@@ -1337,7 +1337,7 @@ pub extern "C" fn send_haptics(device_id: u64, duration_s: f32, frequency: f32, 
             .ok();
     }
 }
-fn write_latency_to_csv(filename: &str, latency_values: [String; 36]) -> Result<(), Box<dyn Error>> {
+fn write_latency_to_csv(filename: &str, latency_values: [String; 38]) -> Result<(), Box<dyn Error>> {
 
     let mut file = OpenOptions::new().write(true).append(true).open(filename)?;
     let mut writer = Writer::from_writer(file);
@@ -1380,6 +1380,9 @@ fn write_latency_to_csv(filename: &str, latency_values: [String; 36]) -> Result<
         &latency_values[33],
         &latency_values[34],
         &latency_values[35],
+        &latency_values[36],
+        &latency_values[37],
+
     ])?;
 
     Ok(())
@@ -1425,6 +1428,8 @@ fn create_csv_file(filename: &str) -> Result<(), Box<dyn Error>> {
         "right_view_fov_down",
         "right_view_fov_left",
         "right_view_fov_right",
+        "yaw",
+        "pitch"
     ])?;
 
     Ok(())
