@@ -67,6 +67,68 @@ Eigen::Vector3d QuatToEuler(const Eigen::Quaterniond& quat) {
     Eigen::Vector3d euler = quat.toRotationMatrix().eulerAngles(2, 1, 0);
     return euler;
 }
+std::tuple<double, double, double, double> ComputeEyeGazeLocation(int frame_width,int frame_height,double yaw,double pitch,double left_view_fov_left,double left_view_fov_right,double left_view_fov_up,double left_view_fov_down,double right_view_fov_left,double right_view_fov_right,double right_view_fov_up,double right_view_fov_down){
+    //separate for two frame
+        // left frame left eye gaze
+        bool left_yaw_positive=0;
+        bool left_pitch_positive=0;
+        double left_frame_x=0.0;
+        double left_frame_y=0.0;
+        if(yaw>0){
+            left_yaw_positive=1;
+        }
+        if(pitch>0){
+            left_pitch_positive=1;
+        }
+
+        if(left_yaw_positive){
+            double projection_horizontal_left_frame = std::tan(std::abs(yaw)) / tan(std::abs(left_view_fov_left)) * (frame_width / 2);
+            left_frame_x=frame_width/2-projection_horizontal_left_frame;
+        }else{
+            double projection_horizontal_left_frame = std::tan(std::abs(yaw)) / tan(std::abs(left_view_fov_right)) * (frame_width / 2);
+            left_frame_x=frame_width/2+projection_horizontal_left_frame;
+
+        }
+        if(left_pitch_positive){
+            double projection_vertical_left_frame = std::tan(std::abs(pitch)) / tan(std::abs(left_view_fov_up)) * (frame_height / 2);
+            left_frame_y=frame_height/2+projection_vertical_left_frame;
+            
+        }else{
+            double projection_vertical_left_frame = std::tan(std::abs(pitch)) / tan(std::abs(left_view_fov_down)) * (frame_height / 2);
+            left_frame_y=frame_height/2-projection_vertical_left_frame;
+
+        }
+        // right frame right eye gaze
+        bool right_yaw_positive=0;
+        bool right_pitch_positive=0;
+        double right_frame_x=0.0;
+        double right_frame_y=0.0;
+        if(yaw>0){
+            right_yaw_positive=1;
+        }
+        if(pitch>0){
+            right_pitch_positive=1;
+        }
+         if(right_yaw_positive){
+            double projection_horizontal_right_frame = std::tan(std::abs(yaw)) / tan(std::abs(right_view_fov_left)) * (frame_width / 2);
+            right_frame_x=frame_width/2-projection_horizontal_right_frame;
+        }else{
+            double projection_horizontal_right_frame = std::tan(std::abs(yaw)) / tan(std::abs(right_view_fov_right)) * (frame_width / 2);
+            right_frame_x=frame_width/2+projection_horizontal_right_frame;
+
+        }
+        if(right_pitch_positive){
+            double projection_vertical_right_frame = std::tan(std::abs(pitch)) / tan(std::abs(right_view_fov_up)) * (frame_height / 2);
+            right_frame_y=frame_height/2+projection_vertical_right_frame;
+            
+        }else{
+            double projection_vertical_right_frame = std::tan(std::abs(pitch)) / tan(std::abs(right_view_fov_down)) * (frame_height / 2);
+            right_frame_y=frame_height/2-projection_vertical_right_frame;
+
+        }
+        //end for separate calculation
+        return std::make_tuple(left_frame_x,left_frame_y,right_frame_x,right_frame_y);
+}
 
 int main()
 {

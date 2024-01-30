@@ -409,6 +409,23 @@ pub unsafe extern "C" fn HmdDriverFactory(
         params
     }
 
+    extern "C" fn get_eye_gaze_location_left_x() -> f64 {
+        let (left_x,left_y,right_x,right_y)=BITRATE_MANAGER.lock().get_eye_gaze_();
+        left_x
+    }
+    extern "C" fn get_eye_gaze_location_left_y() -> f64 {
+        let (left_x,left_y,right_x,right_y)=BITRATE_MANAGER.lock().get_eye_gaze_();
+        left_y
+    }
+    extern "C" fn get_eye_gaze_location_right_x() -> f64 {
+        let (left_x,left_y,right_x,right_y)=BITRATE_MANAGER.lock().get_eye_gaze_();
+        right_x
+    }
+    extern "C" fn get_eye_gaze_location_right_y() -> f64 {
+        let (left_x,left_y,right_x,right_y)=BITRATE_MANAGER.lock().get_eye_gaze_();
+        right_y
+    }
+
     extern "C" fn wait_for_vsync() {
         if SERVER_DATA_MANAGER
             .read()
@@ -445,6 +462,11 @@ pub unsafe extern "C" fn HmdDriverFactory(
     SetOpenvrProps = Some(openvr_props::set_device_openvr_props);
     RegisterButtons = Some(input_mapping::register_buttons);
     GetDynamicEncoderParams = Some(get_dynamic_encoder_params);
+    GetEyeGazeLocationLeftX = Some(get_eye_gaze_location_left_x);
+    GetEyeGazeLocationLeftY = Some(get_eye_gaze_location_left_x);
+    GetEyeGazeLocationRightX = Some(get_eye_gaze_location_right_x);
+    GetEyeGazeLocationRightY = Some(get_eye_gaze_location_right_y);
+
     WaitForVSync = Some(wait_for_vsync);
 
     CppEntryPoint(interface_name, return_code)

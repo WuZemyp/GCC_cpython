@@ -194,6 +194,11 @@ unsigned long long (*PathStringToHash)(const char *path);
 void (*ReportPresent)(unsigned long long timestamp_ns, unsigned long long offset_ns);
 void (*ReportComposed)(unsigned long long timestamp_ns, unsigned long long offset_ns);
 FfiDynamicEncoderParams (*GetDynamicEncoderParams)();
+double (*GetEyeGazeLocationLeftX)();
+double (*GetEyeGazeLocationLeftY)();
+double (*GetEyeGazeLocationRightX)();
+double (*GetEyeGazeLocationRightY)();
+
 unsigned long long (*GetSerialNumber)(unsigned long long deviceID, char *outString);
 void (*SetOpenvrProps)(unsigned long long deviceID);
 void (*RegisterButtons)(unsigned long long deviceID);

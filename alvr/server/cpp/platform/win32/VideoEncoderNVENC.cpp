@@ -87,6 +87,7 @@ void VideoEncoderNVENC::Shutdown()
 void VideoEncoderNVENC::Transmit(ID3D11Texture2D *pTexture, uint64_t presentationTime, uint64_t targetTimestampNs, bool insertIDR)
 {
 	auto params = GetDynamicEncoderParams();
+	auto leftx=GetEyeGazeLocationLeftX();
 	if (params.updated) {
 		m_bitrateInMBits = params.bitrate_bps / 1'000'000;
 		NV_ENC_INITIALIZE_PARAMS initializeParams = { NV_ENC_INITIALIZE_PARAMS_VER };
@@ -97,7 +98,7 @@ void VideoEncoderNVENC::Transmit(ID3D11Texture2D *pTexture, uint64_t presentatio
 		reconfigureParams.reInitEncodeParams = initializeParams;
 		m_NvNecoder->Reconfigure(&reconfigureParams);
 	}
-
+	
 	std::vector<std::vector<uint8_t>> vPacket;
 
 	const NvEncInputFrame* encoderInputFrame = m_NvNecoder->GetNextInputFrame();

@@ -26,6 +26,10 @@ pub struct BitrateManager {
     dynamic_max_bitrate: f32,
     previous_config: Option<BitrateConfig>,
     update_needed: bool,
+    left_frame_x: f64,
+    left_frame_y:f64,
+    right_frame_x:f64,
+    right_frame_y:f64,
 }
 
 impl BitrateManager {
@@ -52,6 +56,10 @@ impl BitrateManager {
             dynamic_max_bitrate: f32::MAX,
             previous_config: None,
             update_needed: true,
+            left_frame_x: 1856.0,
+            left_frame_y:1008.0,
+            right_frame_x:1856.0,
+            right_frame_y:1008.0,
         }
     }
 
@@ -77,6 +85,15 @@ impl BitrateManager {
                 self.update_needed = true;
             }
         }
+    }
+    pub fn report_eye_gaze_update(&mut self, L_x:f64,L_y:f64,R_x:f64,R_y:f64) {
+        self.left_frame_x=L_x;
+        self.left_frame_y=L_y;
+        self.right_frame_x=R_x;
+        self.right_frame_y=R_y;
+    }
+    pub fn get_eye_gaze_(&mut self) ->(f64,f64,f64,f64){
+        (self.left_frame_x,self.left_frame_y, self.right_frame_x, self.right_frame_y)
     }
 
     pub fn report_frame_encoded(

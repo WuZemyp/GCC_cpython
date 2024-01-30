@@ -80,7 +80,88 @@ fn is_streaming(client_hostname: &str) -> bool {
         .map(|c| c.connection_state == ConnectionState::Streaming)
         .unwrap_or(false)
 }
+pub fn compute_eye_gaze_location(
+    frame_width: i32,
+    frame_height: i32,
+    yaw: f64,
+    pitch: f64,
+    left_view_fov_left: f64,
+    left_view_fov_right: f64,
+    left_view_fov_up: f64,
+    left_view_fov_down: f64,
+    right_view_fov_left: f64,
+    right_view_fov_right: f64,
+    right_view_fov_up: f64,
+    right_view_fov_down: f64,
+) -> (f64, f64, f64, f64) {
+    // Separate calculation for left frame left eye gaze
+    let mut left_yaw_positive = false;
+    let mut left_pitch_positive = false;
+    let mut left_frame_x = 0.0;
+    let mut left_frame_y = 0.0;
+    
+    if yaw > 0.0 {
+        left_yaw_positive = true;
+    }
+    if pitch > 0.0 {
+        left_pitch_positive = true;
+    }
 
+    if left_yaw_positive {
+        let projection_horizontal_left_frame =
+            (yaw.abs().tan() / left_view_fov_left.abs().tan()) * (frame_width as f64 / 2.0);
+        left_frame_x = (frame_width as f64 / 2.0) - projection_horizontal_left_frame;
+    } else {
+        let projection_horizontal_left_frame =
+            (yaw.abs().tan() / left_view_fov_right.abs().tan()) * (frame_width as f64 / 2.0);
+        left_frame_x = (frame_width as f64 / 2.0) + projection_horizontal_left_frame;
+    }
+
+    if left_pitch_positive {
+        let projection_vertical_left_frame =
+            (pitch.abs().tan() / left_view_fov_up.abs().tan()) * (frame_height as f64 / 2.0);
+        left_frame_y = (frame_height as f64 / 2.0) + projection_vertical_left_frame;
+    } else {
+        let projection_vertical_left_frame =
+            (pitch.abs().tan() / left_view_fov_down.abs().tan()) * (frame_height as f64 / 2.0);
+        left_frame_y = (frame_height as f64 / 2.0) - projection_vertical_left_frame;
+    }
+
+    // Separate calculation for right frame right eye gaze
+    let mut right_yaw_positive = false;
+    let mut right_pitch_positive = false;
+    let mut right_frame_x = 0.0;
+    let mut right_frame_y = 0.0;
+
+    if yaw > 0.0 {
+        right_yaw_positive = true;
+    }
+    if pitch > 0.0 {
+        right_pitch_positive = true;
+    }
+
+    if right_yaw_positive {
+        let projection_horizontal_right_frame =
+            (yaw.abs().tan() / right_view_fov_left.abs().tan()) * (frame_width as f64 / 2.0);
+        right_frame_x = (frame_width as f64 / 2.0) - projection_horizontal_right_frame;
+    } else {
+        let projection_horizontal_right_frame =
+            (yaw.abs().tan() / right_view_fov_right.abs().tan()) * (frame_width as f64 / 2.0);
+        right_frame_x = (frame_width as f64 / 2.0) + projection_horizontal_right_frame;
+    }
+
+    if right_pitch_positive {
+        let projection_vertical_right_frame =
+            (pitch.abs().tan() / right_view_fov_up.abs().tan()) * (frame_height as f64 / 2.0);
+        right_frame_y = (frame_height as f64 / 2.0) + projection_vertical_right_frame;
+    } else {
+        let projection_vertical_right_frame =
+            (pitch.abs().tan() / right_view_fov_down.abs().tan()) * (frame_height as f64 / 2.0);
+        right_frame_y = (frame_height as f64 / 2.0) - projection_vertical_right_frame;
+    }
+
+    (left_frame_x, left_frame_y, right_frame_x, right_frame_y)
+}
 pub fn contruct_openvr_config(session: &SessionConfig) -> OpenvrConfig {
     let old_config = session.openvr_config.clone();
     let settings = session.to_settings();
@@ -796,6 +877,11 @@ fn connection_pipeline(
                         right_view_position_array[0].to_string(),right_view_position_array[1].to_string(),right_view_position_array[2].to_string(),//right eye view position
                         tracking.right_view_fov.up.to_string(),tracking.right_view_fov.down.to_string(),tracking.right_view_fov.left.to_string(),tracking.right_view_fov.right.to_string(),left_yaw.to_string(),left_pitch.to_string()];//right eye fov
                         write_latency_to_csv("eyegaze.csv", eye_data);
+                        let frame_width=3712;
+                        let frame_height=2016;
+                        let (left_frame_x,left_frame_y,right_frame_x,right_frame_y)= compute_eye_gaze_location(frame_width,frame_height,left_yaw as f64, left_pitch as f64, tracking.left_view_fov.left as f64, tracking.left_view_fov.right as f64, tracking.left_view_fov.up as f64, tracking.left_view_fov.down as f64, tracking.right_view_fov.left as f64, tracking.right_view_fov.right as f64, tracking.right_view_fov.up as f64, tracking.right_view_fov.down as f64);
+                        BITRATE_MANAGER.lock().report_eye_gaze_update(left_frame_x, left_frame_y, right_frame_x, right_frame_y);
+                        
                     }
 
                     sink.send_tracking(face_data);
