@@ -540,6 +540,52 @@ void NvEncoder::GetSequenceParams(std::vector<uint8_t> &seqParams)
     seqParams.insert(seqParams.end(), &spsppsData[0], &spsppsData[spsppsSize]);
 }
 
+void NvEncoder::GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY){
+    bool changed = false;
+    if(changed || m_leftX != leftX/m_nWidth){
+        m_leftX = leftX/3712.0*m_nWidth;
+        changed = true;
+    }
+    if(changed || m_leftY != leftY/m_nHeight){
+        m_leftY = leftY/2016.0*m_nHeight;
+        changed = true;
+    }
+    if(changed || m_rightX != rightX/m_nWidth){
+        m_rightX = rightX/3712.0*m_nWidth;
+        changed = true;
+    }
+    if(changed || m_rightY != rightY/m_nHeight){
+        m_rightY = rightY/2016.0*m_nHeight;
+        changed = true;
+    }
+    if(changed){
+        qp_map = new int8_t[m_qpDeltaMapSize];
+        int width = (m_nWidth+15)/16/2;
+        int height = (m_nHeight+15)/16;
+        int r = width*9/94; 
+        for(int i=0; i<width; i++){
+            for(int j=0; j<height; j++){
+                if(i>=m_leftX-r && i<=m_leftX+r && j>=m_leftY-r && j<=m_leftY+r &&(i-m_leftX)*(i-m_leftX)+(j-m_leftY)*(j-m_leftY)<=r*r){
+                    qp_map[j*width*2+i] = -15;
+                }
+                else{
+                    qp_map[j*width*2+i] = 20;
+                }
+            }
+        }
+        for(int i=0; i<width; i++){
+            for(int j=0; j<height; j++){
+                if(i>=m_rightX-r && i<=m_rightX+r && j>=m_rightY-r && j<=m_rightY+r &&(i-m_rightX)*(i-m_rightX)+(j-m_rightY)*(j-m_rightY)<=r*r){
+                    qp_map[j*width*2+i+width] = -15;
+                }
+                else{
+                    qp_map[j*width*2+i+width] = 20;
+                }
+            }
+        }
+    }
+}
+
 NVENCSTATUS NvEncoder::DoEncode(NV_ENC_INPUT_PTR inputBuffer, NV_ENC_OUTPUT_PTR outputBuffer, NV_ENC_PIC_PARAMS *pPicParams)
 {
     NV_ENC_PIC_PARAMS picParams = {};
@@ -555,6 +601,8 @@ NVENCSTATUS NvEncoder::DoEncode(NV_ENC_INPUT_PTR inputBuffer, NV_ENC_OUTPUT_PTR 
     picParams.inputHeight = GetEncodeHeight();
     picParams.outputBitstream = outputBuffer;
     picParams.completionEvent = GetCompletionEvent(m_iToSend % m_nEncoderBuffer);
+    picParams.qpDeltaMap = qp_map;
+    picParams.qpDeltaMapSize = m_qpDeltaMapSize;
     NVENCSTATUS nvStatus = m_nvenc.nvEncEncodePicture(m_hEncoder, &picParams);
 
     return nvStatus; 
@@ -644,7 +692,8 @@ bool NvEncoder::Reconfigure(const NV_ENC_RECONFIGURE_PARAMS *pReconfigureParams)
     m_nHeight = m_initializeParams.encodeHeight;
     m_nMaxEncodeWidth = m_initializeParams.maxEncodeWidth;
     m_nMaxEncodeHeight = m_initializeParams.maxEncodeHeight;
-
+    m_numBlocks = (m_nWidth+15)/16*(m_nHeight+15)/16;
+    m_qpDeltaMapSize = m_numBlocks * sizeof(NV_ENC_EMPHASIS_MAP_LEVEL);
     return true;
 }
 

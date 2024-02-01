@@ -318,6 +318,8 @@ protected:
     */
     NVENCSTATUS DoEncode(NV_ENC_INPUT_PTR inputBuffer, NV_ENC_OUTPUT_PTR outputBuffer, NV_ENC_PIC_PARAMS *pPicParams);
 
+    void GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY);
+
     /**
     *  @brief This function is used to submit the encode commands to the 
     *         NVENC hardware for ME only mode.
@@ -445,4 +447,11 @@ private:
     uint32_t m_nMaxEncodeWidth = 0;
     uint32_t m_nMaxEncodeHeight = 0;
     void* m_hModule = nullptr;
+    int8_t* qp_map = nullptr;
+    int m_numBlocks = 0;
+    int m_qpDeltaMapSize = 0;
+    int m_leftX=-1;
+    int m_leftY=-1;
+    int m_rightX=-1;
+    int m_rightY=-1;
 };
