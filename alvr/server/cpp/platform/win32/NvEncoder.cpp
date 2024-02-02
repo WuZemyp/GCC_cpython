@@ -542,19 +542,19 @@ void NvEncoder::GetSequenceParams(std::vector<uint8_t> &seqParams)
 
 void NvEncoder::GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY){
     bool changed = false;
-    if(changed || m_leftX != leftX/m_nWidth){
-        m_leftX = leftX/3712.0*m_nWidth;
+    if(changed || m_leftX != leftX/3712.0*m_nWidth/2){
+        m_leftX = leftX/3712.0*m_nWidth/2;
         changed = true;
     }
-    if(changed || m_leftY != leftY/m_nHeight){
+    if(changed || m_leftY != leftY/2016.0*m_nHeight){
         m_leftY = leftY/2016.0*m_nHeight;
         changed = true;
     }
-    if(changed || m_rightX != rightX/m_nWidth){
-        m_rightX = rightX/3712.0*m_nWidth;
+    if(changed || m_rightX != (rightX/3712.0*m_nWidth/2+(m_nWidth+15)/16/2)){
+        m_rightX = rightX/3712.0*m_nWidth/2+(m_nWidth+15)/16/2;
         changed = true;
     }
-    if(changed || m_rightY != rightY/m_nHeight){
+    if(changed || m_rightY != rightY/2016.0*m_nHeight){
         m_rightY = rightY/2016.0*m_nHeight;
         changed = true;
     }
