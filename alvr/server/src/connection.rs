@@ -866,6 +866,11 @@ fn connection_pipeline(
                         let left_view_position_array=tracking.left_view_pose.position.to_array();
                         let right_view_quat_array=tracking.right_view_pose.orientation.to_array();
                         let right_view_position_array=tracking.right_view_pose.position.to_array();
+                        
+                        let frame_width=3712;
+                        let frame_height=2016;
+                        let (left_frame_x,left_frame_y,right_frame_x,right_frame_y)= compute_eye_gaze_location(frame_width,frame_height,left_yaw as f64, left_pitch as f64, tracking.left_view_fov.left as f64, tracking.left_view_fov.right as f64, tracking.left_view_fov.up as f64, tracking.left_view_fov.down as f64, tracking.right_view_fov.left as f64, tracking.right_view_fov.right as f64, tracking.right_view_fov.up as f64, tracking.right_view_fov.down as f64);
+                        BITRATE_MANAGER.lock().report_eye_gaze_update(left_frame_x, left_frame_y, right_frame_x, right_frame_y);
                         let eye_data=[local_quat_array[0].to_string(),local_quat_array[1].to_string(),local_quat_array[2].to_string(),local_quat_array[3].to_string(),//local combined eye orientation
                         local_position_array[0].to_string(),local_position_array[1].to_string(),local_position_array[2].to_string(),//local combined eye position
                         global_quat_array[0].to_string(),global_quat_array[1].to_string(),global_quat_array[2].to_string(),global_quat_array[3].to_string(),//global combined eye orientation
@@ -875,12 +880,8 @@ fn connection_pipeline(
                         tracking.left_view_fov.up.to_string(),tracking.left_view_fov.down.to_string(),tracking.left_view_fov.left.to_string(),tracking.left_view_fov.right.to_string(),//left eye fov
                         right_view_quat_array[0].to_string(),right_view_quat_array[1].to_string(),right_view_quat_array[2].to_string(),right_view_quat_array[3].to_string(),//right eye view orientation
                         right_view_position_array[0].to_string(),right_view_position_array[1].to_string(),right_view_position_array[2].to_string(),//right eye view position
-                        tracking.right_view_fov.up.to_string(),tracking.right_view_fov.down.to_string(),tracking.right_view_fov.left.to_string(),tracking.right_view_fov.right.to_string(),left_yaw.to_string(),left_pitch.to_string()];//right eye fov
+                        tracking.right_view_fov.up.to_string(),tracking.right_view_fov.down.to_string(),tracking.right_view_fov.left.to_string(),tracking.right_view_fov.right.to_string(),left_yaw.to_string(),left_pitch.to_string(),left_frame_x.to_string(),left_frame_y.to_string(),right_frame_x.to_string(),right_frame_y.to_string()];//right eye fov
                         write_latency_to_csv("eyegaze.csv", eye_data);
-                        let frame_width=3712;
-                        let frame_height=2016;
-                        let (left_frame_x,left_frame_y,right_frame_x,right_frame_y)= compute_eye_gaze_location(frame_width,frame_height,left_yaw as f64, left_pitch as f64, tracking.left_view_fov.left as f64, tracking.left_view_fov.right as f64, tracking.left_view_fov.up as f64, tracking.left_view_fov.down as f64, tracking.right_view_fov.left as f64, tracking.right_view_fov.right as f64, tracking.right_view_fov.up as f64, tracking.right_view_fov.down as f64);
-                        BITRATE_MANAGER.lock().report_eye_gaze_update(left_frame_x, left_frame_y, right_frame_x, right_frame_y);
                         
                     }
 
@@ -1423,7 +1424,7 @@ pub extern "C" fn send_haptics(device_id: u64, duration_s: f32, frequency: f32, 
             .ok();
     }
 }
-fn write_latency_to_csv(filename: &str, latency_values: [String; 38]) -> Result<(), Box<dyn Error>> {
+fn write_latency_to_csv(filename: &str, latency_values: [String; 42]) -> Result<(), Box<dyn Error>> {
 
     let mut file = OpenOptions::new().write(true).append(true).open(filename)?;
     let mut writer = Writer::from_writer(file);
@@ -1468,6 +1469,11 @@ fn write_latency_to_csv(filename: &str, latency_values: [String; 38]) -> Result<
         &latency_values[35],
         &latency_values[36],
         &latency_values[37],
+        &latency_values[38],
+        &latency_values[39],
+        &latency_values[40],
+        &latency_values[41],
+
 
     ])?;
 

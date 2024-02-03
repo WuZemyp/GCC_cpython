@@ -87,10 +87,14 @@ void VideoEncoderNVENC::Shutdown()
 void VideoEncoderNVENC::Transmit(ID3D11Texture2D *pTexture, uint64_t presentationTime, uint64_t targetTimestampNs, bool insertIDR)
 {
 	auto params = GetDynamicEncoderParams();
-	int leftx=int(GetEyeGazeLocationLeftX());
-	int lefty=int(GetEyeGazeLocationLeftY());
-	int rightx=int(GetEyeGazeLocationRightX());
-	int righty=int(GetEyeGazeLocationRightY());
+	// int leftx=int(GetEyeGazeLocationLeftX());
+	// int lefty=int(2016-GetEyeGazeLocationLeftY());
+	// int rightx=int(GetEyeGazeLocationRightX());
+	// int righty=int(2016-GetEyeGazeLocationRightY());
+	int leftx=1856;
+	int lefty=1008;
+	int rightx=1856;
+	int righty=1008;
 	if (params.updated) {
 		m_bitrateInMBits = params.bitrate_bps / 1'000'000;
 		NV_ENC_INITIALIZE_PARAMS initializeParams = { NV_ENC_INITIALIZE_PARAMS_VER };
