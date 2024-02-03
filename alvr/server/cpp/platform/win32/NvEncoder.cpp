@@ -542,26 +542,26 @@ void NvEncoder::GetSequenceParams(std::vector<uint8_t> &seqParams)
 
 void NvEncoder::GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY){
     bool changed = false;
-    if(changed || m_leftX != leftX/3712.0*m_nWidth/2){
-        m_leftX = leftX/3712.0*m_nWidth/2;
+    int width = (m_nWidth+15)/16/2;
+    int height = (m_nHeight+15)/16;
+    if(changed || m_leftX != leftX/3712.0*width){
+        m_leftX = leftX/3712.0*width;
         changed = true;
     }
-    if(changed || m_leftY != leftY/2016.0*m_nHeight){
-        m_leftY = leftY/2016.0*m_nHeight;
+    if(changed || m_leftY != leftY/2016.0*height){
+        m_leftY = leftY/2016.0*height;
         changed = true;
     }
-    if(changed || m_rightX != (rightX/3712.0*m_nWidth/2+(m_nWidth+15)/16/2)){
-        m_rightX = rightX/3712.0*m_nWidth/2+(m_nWidth+15)/16/2;
+    if(changed || m_rightX != (rightX/3712.0*width+width)){
+        m_rightX = rightX/3712.0*width+width;
         changed = true;
     }
-    if(changed || m_rightY != rightY/2016.0*m_nHeight){
-        m_rightY = rightY/2016.0*m_nHeight;
+    if(changed || m_rightY != rightY/2016.0*height){
+        m_rightY = rightY/2016.0*height;
         changed = true;
     }
     if(changed){
         qp_map = new int8_t[m_qpDeltaMapSize];
-        int width = (m_nWidth+15)/16/2;
-        int height = (m_nHeight+15)/16;
         int r = width*9/94; 
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
