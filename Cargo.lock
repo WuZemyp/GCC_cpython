@@ -3616,7 +3616,7 @@ dependencies = [
 [[package]]
 name = "openxr"
 version = "0.17.1"
-source = "git+https://github.com/zarik5/openxrs#5c5946528ac702a0c65834f6133d70c569a43a56"
+source = "git+https://github.com/zarik5/openxrs#22a18bbc0b03289b5ec4b67fefb1b231229dfc79"
 dependencies = [
  "libc",
  "libloading 0.8.1",
@@ -3627,7 +3627,7 @@ dependencies = [
 [[package]]
 name = "openxr-sys"
 version = "0.9.3"
-source = "git+https://github.com/zarik5/openxrs#5c5946528ac702a0c65834f6133d70c569a43a56"
+source = "git+https://github.com/zarik5/openxrs#22a18bbc0b03289b5ec4b67fefb1b231229dfc79"
 dependencies = [
  "libc",
 ]

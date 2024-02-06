@@ -568,20 +568,20 @@ void NvEncoder::GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY){
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
                 if(i>=m_leftX-r && i<=m_leftX+r && j>=m_leftY-r && j<=m_leftY+r &&(i-m_leftX)*(i-m_leftX)+(j-m_leftY)*(j-m_leftY)<=r*r){
-                    qp_map[j*width*2+i] = -15;
+                    qp_map[j*width*2+i] = static_cast<int8_t>(-19);
                 }
                 else{
-                    qp_map[j*width*2+i] = 20;
+                    qp_map[j*width*2+i] = static_cast<int8_t>(30);
                 }
             }
         }
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
                 if(i>=m_rightX-r && i<=m_rightX+r && j>=m_rightY-r && j<=m_rightY+r &&(i-m_rightX)*(i-m_rightX)+(j-m_rightY)*(j-m_rightY)<=r*r){
-                    qp_map[j*width*2+i+width] = -15;
+                    qp_map[j*width*2+i+width] = static_cast<int8_t>(-19);
                 }
                 else{
-                    qp_map[j*width*2+i+width] = 20;
+                    qp_map[j*width*2+i+width] = static_cast<int8_t>(30);
                 }
             }
         }
