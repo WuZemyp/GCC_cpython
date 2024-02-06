@@ -544,6 +544,8 @@ void NvEncoder::GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY){
     bool changed = false;
     int width = (m_nWidth+15)/16/2;
     int height = (m_nHeight+15)/16;
+    m_numBlocks = (m_nWidth+15)/16*(m_nHeight+15)/16;
+    m_qpDeltaMapSize = m_numBlocks * sizeof(NV_ENC_EMPHASIS_MAP_LEVEL);
     if(changed || m_leftX != leftX/3712.0*width){
         m_leftX = leftX/3712.0*width;
         changed = true;
@@ -552,8 +554,8 @@ void NvEncoder::GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY){
         m_leftY = leftY/2016.0*height;
         changed = true;
     }
-    if(changed || m_rightX != (rightX/3712.0*width+width)){
-        m_rightX = rightX/3712.0*width+width;
+    if(changed || m_rightX != (rightX/3712.0*width)){
+        m_rightX = rightX/3712.0*width;
         changed = true;
     }
     if(changed || m_rightY != rightY/2016.0*height){
