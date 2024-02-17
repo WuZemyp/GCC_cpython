@@ -463,7 +463,7 @@ pub unsafe extern "C" fn HmdDriverFactory(
     RegisterButtons = Some(input_mapping::register_buttons);
     GetDynamicEncoderParams = Some(get_dynamic_encoder_params);
     GetEyeGazeLocationLeftX = Some(get_eye_gaze_location_left_x);
-    GetEyeGazeLocationLeftY = Some(get_eye_gaze_location_left_x);
+    GetEyeGazeLocationLeftY = Some(get_eye_gaze_location_left_y);
     GetEyeGazeLocationRightX = Some(get_eye_gaze_location_right_x);
     GetEyeGazeLocationRightY = Some(get_eye_gaze_location_right_y);
 
