@@ -562,9 +562,10 @@ void NvEncoder::GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY){
         m_rightY = rightY/2016.0*height;
         changed = true;
     }
+    // do a central wrap on the four value then ok
     if(changed){
         qp_map = new int8_t[m_qpDeltaMapSize];
-        int r = width*30/94;
+        int r = width*18/94;
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
                 if(i>=m_leftX-r && i<=m_leftX+r && j>=m_leftY-r && j<=m_leftY+r &&(i-m_leftX)*(i-m_leftX)+(j-m_leftY)*(j-m_leftY)<=r*r){
