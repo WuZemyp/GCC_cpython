@@ -87,19 +87,23 @@ void VideoEncoderNVENC::Shutdown()
 void VideoEncoderNVENC::Transmit(ID3D11Texture2D *pTexture, uint64_t presentationTime, uint64_t targetTimestampNs, bool insertIDR)
 {
 	auto params = GetDynamicEncoderParams();
+	int leftxfromrust=int(GetEyeGazeLocationLeftX());
+	int leftyfromrust=int(GetEyeGazeLocationLeftY());
+	int rightxfromrust=int(GetEyeGazeLocationRightX());
+	int rightyfromrust=int(GetEyeGazeLocationRightY());
 	int leftx=int(GetEyeGazeLocationLeftX());
-	//int lefty=int(2016-GetEyeGazeLocationLeftY());
-	int lefty=int(GetEyeGazeLocationLeftY());
+	int lefty=int(2016-GetEyeGazeLocationLeftY());
+	//int lefty=int(GetEyeGazeLocationLeftY());
 	int rightx=int(GetEyeGazeLocationRightX());
-	//int righty=int(2016-GetEyeGazeLocationRightY());
-	int righty=int(GetEyeGazeLocationRightY());
+	int righty=int(2016-GetEyeGazeLocationRightY());
+	//int righty=int(GetEyeGazeLocationRightY());
 	// int leftx=500;
 	// int lefty=1008;
 	// int rightx=3200;
 	// int righty=1008;
 	std::ofstream file("C:\\Users\\13513\\ALVR_Private\\ALVR_eyetracking_testforcommit\\FovOptix_dynamicFoveation\\passing.csv", std::ios_base::app);
     // Write the integers to the file, separated by commas
-    file << leftx << "," << lefty << "," << rightx << "," << righty << std::endl;
+    file << leftxfromrust << "," << leftyfromrust << "," << rightxfromrust << "," << rightyfromrust << std::endl;
     // Close the file
     file.close();
 	if (params.updated) {
