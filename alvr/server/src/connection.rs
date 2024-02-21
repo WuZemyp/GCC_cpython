@@ -143,11 +143,11 @@ pub fn compute_eye_gaze_location(
     if right_yaw_positive {
         let projection_horizontal_right_frame =
             (yaw.abs().tan() / right_view_fov_left.abs().tan()) * (frame_width as f64 / 2.0);
-        right_frame_x = (frame_width as f64 / 2.0) - projection_horizontal_right_frame;
+        right_frame_x = (frame_width as f64 / 2.0) - projection_horizontal_right_frame+frame_width as f64;
     } else {
         let projection_horizontal_right_frame =
             (yaw.abs().tan() / right_view_fov_right.abs().tan()) * (frame_width as f64 / 2.0);
-        right_frame_x = (frame_width as f64 / 2.0) + projection_horizontal_right_frame;
+        right_frame_x = (frame_width as f64 / 2.0) + projection_horizontal_right_frame+frame_width as f64;
     }
 
     if right_pitch_positive {
@@ -867,8 +867,8 @@ fn connection_pipeline(
                         let right_view_quat_array=tracking.right_view_pose.orientation.to_array();
                         let right_view_position_array=tracking.right_view_pose.position.to_array();
                         
-                        let frame_width=3712;
-                        let frame_height=2016;
+                        let frame_width=2144;
+                        let frame_height=2336;
                         let (left_frame_x,left_frame_y,right_frame_x,right_frame_y)= compute_eye_gaze_location(frame_width,frame_height,left_yaw as f64, left_pitch as f64, tracking.left_view_fov.left as f64, tracking.left_view_fov.right as f64, tracking.left_view_fov.up as f64, tracking.left_view_fov.down as f64, tracking.right_view_fov.left as f64, tracking.right_view_fov.right as f64, tracking.right_view_fov.up as f64, tracking.right_view_fov.down as f64);
                         BITRATE_MANAGER.lock().report_eye_gaze_update(left_frame_x, left_frame_y, right_frame_x, right_frame_y);
                         let eye_data=[local_quat_array[0].to_string(),local_quat_array[1].to_string(),local_quat_array[2].to_string(),local_quat_array[3].to_string(),//local combined eye orientation

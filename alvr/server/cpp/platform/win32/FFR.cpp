@@ -80,7 +80,7 @@ FFR::FFR(ID3D11Device* device) : mDevice(device) {}
 
 void FFR::Initialize(ID3D11Texture2D* compositionTexture) {
 	auto fovVars = CalculateFoveationVars();
-	std::ofstream testOut("C:\\AT\\ALVR\\build\\alvr_streamer_windows\\testing.txt", std::ios::app);
+	std::ofstream testOut("fovVar.txt", std::ios::app);
 	testOut << "targetEyeWidth" << fovVars.targetEyeWidth << std::endl;
 	testOut << "targetEyeHeight" << fovVars.targetEyeHeight << std::endl;
 	testOut << "OptimizedEyeWidth" << fovVars.optimizedEyeWidth << std::endl;
