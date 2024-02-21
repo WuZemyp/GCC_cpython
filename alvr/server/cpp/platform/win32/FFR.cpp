@@ -3,6 +3,7 @@
 #include "alvr_server/Settings.h"
 #include "alvr_server/Utils.h"
 #include "alvr_server/bindings.h"
+#include <fstream>
 
 using Microsoft::WRL::ComPtr;
 using namespace d3d_render_utils;
@@ -79,6 +80,22 @@ FFR::FFR(ID3D11Device* device) : mDevice(device) {}
 
 void FFR::Initialize(ID3D11Texture2D* compositionTexture) {
 	auto fovVars = CalculateFoveationVars();
+	std::ofstream testOut("C:\\AT\\ALVR\\build\\alvr_streamer_windows\\testing.txt", std::ios::app);
+	testOut << "targetEyeWidth" << fovVars.targetEyeWidth << std::endl;
+	testOut << "targetEyeHeight" << fovVars.targetEyeHeight << std::endl;
+	testOut << "OptimizedEyeWidth" << fovVars.optimizedEyeWidth << std::endl;
+	testOut << "OptimizedEyeHeight" << fovVars.optimizedEyeHeight << std::endl;
+	testOut << "eyeWidthRatio" << fovVars.eyeWidthRatio << std::endl;
+	testOut << "eyeHeightRatio" << fovVars.eyeHeightRatio << std::endl;
+	testOut << "centerSizeX" << fovVars.centerSizeX << std::endl;
+	testOut << "centerSizeY" << fovVars.centerSizeY << std::endl;
+	testOut << "centerShiftX" << fovVars.centerShiftX << std::endl;
+	testOut << "centerShiftY" << fovVars.centerShiftY << std::endl;
+	testOut << "edgeRatioX" << fovVars.edgeRatioX << std::endl;
+	testOut << "edgeRatioY" << fovVars.edgeRatioY << std::endl;
+
+
+
 	ComPtr<ID3D11Buffer> foveatedRenderingBuffer = CreateBuffer(mDevice.Get(), fovVars);
 
 	std::vector<uint8_t> quadShaderCSO(QUAD_SHADER_CSO_PTR, QUAD_SHADER_CSO_PTR + QUAD_SHADER_CSO_LEN);
