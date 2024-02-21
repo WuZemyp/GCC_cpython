@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string.h>
 #include "NvCodecUtils.h"
+#include <cmath>
 
 /**
 * @brief Exception class for error reporting from NvEncodeAPI calls.
@@ -456,3 +457,22 @@ private:
     int m_rightX=-1;
     int m_rightY=-1;
 };
+
+float c0_x = 0.29729748;
+float c1_x = 0.31216234;
+float c2_x = 2.2162151;
+float lo_bound_x = 0.41621646;
+float hi_bound_x = 0.82162154;
+float loBoundC_x = 0.18780509;
+float hiBoundC_x = 0.9195121;
+float edge_ratio_x = 4.0;
+float eye_size_ratio_x = 0.98125;
+float c0_y = 0.4468085;
+float c1_y = 0.39535794;
+float c2_y = 1.425532;
+float lo_bound_y = 0.49419743;
+float hi_bound_y = 0.60058045;
+float loBoundC_y = 0.34667578;
+float hiBoundC_y = 0.7198102;
+float edge_ratio_y = 5.0;
+float eye_size_ratio_y = 0.993421;
