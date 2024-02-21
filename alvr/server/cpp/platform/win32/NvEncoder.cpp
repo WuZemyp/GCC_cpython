@@ -548,7 +548,7 @@ float Eye2Texturex(float eye_x, bool is_right){
   return eye_x * 0.5 + float(is_right) * (1.0 - eye_x);
 }
 
-int decompress_x(int x){
+int NvEncoder::decompress_x(int x){
     float f_x = float(x)/(2144*2);
     bool is_right = (f_x>0.5);
     float eye_x = Texture2Eyex(f_x, is_right);
@@ -570,7 +570,7 @@ int decompress_x(int x){
     return int(Eye2Texturex(compressed_x*eye_size_ratio_x, is_right)*1280*2);
 }
 
-int decompress_y(int y){
+int NvEncoder::decompress_y(int y){
     float f_y = float(y)/2336;
     bool under_bound = (f_y<lo_bound_y);
     bool over_bound = (f_y>=hi_bound_y);
