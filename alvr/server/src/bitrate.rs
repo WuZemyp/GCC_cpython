@@ -56,10 +56,10 @@ impl BitrateManager {
             dynamic_max_bitrate: f32::MAX,
             previous_config: None,
             update_needed: true,
-            left_frame_x: 1856.0,
-            left_frame_y:1008.0,
-            right_frame_x:1856.0,
-            right_frame_y:1008.0,
+            left_frame_x: 1072.0,
+            left_frame_y:1168.0,
+            right_frame_x:3216.0,
+            right_frame_y:1168.0,
         }
     }
 
