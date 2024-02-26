@@ -615,7 +615,7 @@ void NvEncoder::GenQPDeltaMap(int leftX, int leftY, int rightX, int rightY){
         qp_map = new int8_t[m_qpDeltaMapSize];
         int r_leftX = (decompress_x(m_leftX)+15)/16;
         int r_leftY = (decompress_y(m_leftY)+15)/16;
-        int r_rightX = (decompress_x(m_rightX)+15)/16;
+        int r_rightX = (decompress_x(m_rightX)+15)/16-width;
         int r_rightY = (decompress_y(m_rightY)+15)/16;
         std::ofstream file("C:\\Users\\13513\\ALVR_Private\\ALVR_eyetracking_testforcommit\\FovOptix_dynamicFoveation\\nvValue.csv", std::ios_base::app);
         // Write the integers to the file, separated by commas
